@@ -20,6 +20,12 @@ terraform apply
 # k8s get creds
 yc managed-kubernetes cluster get-credentials homework-k8s --external
 
+# Get SA Ingress key
+./scripts/sa-ingress-key.sh
+
+# Install Ingress
+./scripts/install.sh
+
 # GET S3 Keys
 ./scripts/s3-secrets.sh
 
