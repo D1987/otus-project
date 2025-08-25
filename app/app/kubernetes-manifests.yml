@@ -19,6 +19,8 @@ spec:
       labels:
         app: emailservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: emailservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -97,6 +99,8 @@ spec:
       labels:
         app: checkoutservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: checkoutservice
       securityContext:
         fsGroup: 1000
@@ -113,6 +117,9 @@ spec:
           privileged: false
           readOnlyRootFilesystem: true
         image: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice:v0.10.3
+        envFrom:
+        - configMapRef:
+            name: opentelemetry-env
         ports:
         - containerPort: 5050
         readinessProbe:
@@ -182,6 +189,8 @@ spec:
       labels:
         app: recommendationservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: recommendationservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -264,6 +273,8 @@ spec:
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: frontend
       securityContext:
         fsGroup: 1000
@@ -394,6 +405,8 @@ spec:
       labels:
         app: paymentservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: paymentservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -470,6 +483,8 @@ spec:
       labels:
         app: productcatalogservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: productcatalogservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -546,6 +561,8 @@ spec:
       labels:
         app: cartservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: cartservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -623,6 +640,8 @@ spec:
       labels:
         app: redis-cart
     spec:
+      nodeSelector:
+        role: workload
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -697,6 +716,8 @@ spec:
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: loadgenerator
       terminationGracePeriodSeconds: 5
       restartPolicy: Always
@@ -783,6 +804,8 @@ spec:
       labels:
         app: currencyservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: currencyservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -860,6 +883,8 @@ spec:
       labels:
         app: shippingservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: shippingservice
       securityContext:
         fsGroup: 1000
@@ -936,6 +961,8 @@ spec:
       labels:
         app: adservice
     spec:
+      nodeSelector:
+        role: workload
       serviceAccountName: adservice
       terminationGracePeriodSeconds: 5
       securityContext:
@@ -997,56 +1024,4 @@ kind: ServiceAccount
 metadata:
   name: adservice
   namespace: app
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-prod
-spec:
-  acme:
-    email: d.zimin@21vek.by
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    solvers:
-    - http01:
-        ingress:
-          class: nginx
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: app-tls
-  namespace: app
-spec:
-  secretName: app-tls-secret
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-  dnsNames:
-    - 158.160.175.146.sslip.io
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: alb-app
-  namespace: app
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-      - 158.160.175.146.sslip.io
-      secretName: app-tls-secret
-  rules:
-    - host: 158.160.175.146.sslip.io
-      http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: frontend-external
-              port:
-                number: 80
+  

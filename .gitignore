@@ -1,6 +1,8 @@
 # Local .terraform directories
 .terraform/
 
+.ansible/
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
@@ -35,3 +37,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+.infra/terraform/.terraform
+
+.infra/terraform/key.json

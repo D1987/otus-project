@@ -1,0 +1,29 @@
+installCRDs: true
+prometheus:
+  enabled: false
+
+# nodeSelector:
+#   role: infra
+# tolerations:
+#   - key: "node-role"
+#     operator: "Equal"
+#     value: "infra"
+#     effect: "NoSchedule"
+
+# webhook:
+#   nodeSelector:
+#     role: infra  
+#   tolerations:
+#       - key: "node-role"
+#         operator: "Equal"
+#         value: "infra"
+#         effect: "NoSchedule"
+
+# cainjector:
+#   nodeSelector:
+#     role: infra  
+#   tolerations:
+#       - key: "node-role"
+#         operator: "Equal"
+#         value: "infra"
+#         effect: "NoSchedule"
