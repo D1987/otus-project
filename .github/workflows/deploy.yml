@@ -3,9 +3,10 @@ name: Deploy to Yandex Kubernetes
 run-name: ${{ github.actor }} is testing out GitHub Actions
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
 
 jobs:
   deploy:

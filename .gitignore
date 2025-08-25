@@ -40,4 +40,4 @@ terraform.rc
 
 .infra/terraform/.terraform
 
-key.json
+.infra/terraform/key.json
