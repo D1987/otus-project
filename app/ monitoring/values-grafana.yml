@@ -13,12 +13,12 @@ datasources:
           httpMethod: "POST"
       
       # Loki (для логов)
-      - name: Loki
-        type: loki
-        url: http://loki:3100
-        access: proxy
-        jsonData:
-          maxLines: 1000
+      # - name: Loki
+      #   type: loki
+      #   url: http://loki:3100
+      #   access: proxy
+      #   jsonData:
+      #     maxLines: 1000
 
   # grafana.ini:
   #   [smtp]
@@ -31,10 +31,10 @@ datasources:
   #   from_name = Grafana
 
 
-nodeSelector:
-  role: infra
-tolerations:
-  - key: "node-role"
-    operator: "Equal"
-    value: "infra"
-    effect: "NoSchedule"
+# nodeSelector:
+#   role: infra
+# tolerations:
+#   - key: "node-role"
+#     operator: "Equal"
+#     value: "infra"
+#     effect: "NoSchedule"

@@ -19,7 +19,15 @@ if [ "$1" = "i" ]; then
     #     --version v1.14.4 \
     #     -f app/cert-manager/values.yml
 
-    # prom-operator
+
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo update
+    helm upgrade --install loki-stack grafana/loki-stack \
+        --namespace loki \
+        --create-namespace \
+        -f app/logging/values-loki-stack.yml
+
+    # prometheus-stack
     # helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     # helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
     #     --namespace monitoring \
@@ -32,12 +40,12 @@ if [ "$1" = "i" ]; then
     # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
     # helm upgrade --install grafana grafana/grafana \
     #   --namespace loki \
+    #   --namespace loki --create-namespace \
     #   --values app/logging/values-grafana.yml
 
     # loki
     # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
     # helm upgrade --install loki grafana/loki \
-    #   --namespace loki --create-namespace \
     #   --values app/logging/values-loki.yml
     
     # promtail
@@ -48,10 +56,10 @@ if [ "$1" = "i" ]; then
 
     # argo-cd
     # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
-      helm repo add argo https://argoproj.github.io/argo-helm
-      helm upgrade --install argocd argo/argo-cd \
-        --namespace argo-cd \
-        --create-namespace
+      # helm repo add argo https://argoproj.github.io/argo-helm
+      # helm upgrade --install argocd argo/argo-cd \
+      #   --namespace argo-cd \
+      #   --create-namespace
         # --values "app/argo/values.yml"
       
 elif [ "$1" = "u" ]; then
@@ -60,8 +68,9 @@ elif [ "$1" = "u" ]; then
     # helm uninstall cert-manager -n cert-manager
     # helm uninstall kube-prometheus-stack -n monitoring
     # helm uninstall grafana -n loki
+    helm uninstall loki-stack -n loki
     # helm uninstall loki -n loki
     # helm uninstall promtail -n loki
     # helm uninstall jaeger-operator -n observability
-    helm uninstall argocd -n argo-cd
+    # helm uninstall argocd -n argo-cd
 fi
