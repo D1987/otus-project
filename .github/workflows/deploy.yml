@@ -29,12 +29,6 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
-
-      - name: Install Yandex Cloud CLI
-        run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-        
-      - name: Init yc in PATH
-        run: echo "${HOME}/yandex-cloud/bin" >> $GITHUB_PATH
       
       - name: Install gettext for envsubst
         run: sudo apt-get install -y gettext-base
@@ -86,46 +80,3 @@ jobs:
       - name: Deploy Web app
         run: |
           kubectl apply -f app/argocd/web-app.yml -n argocd
-
-  # deploy-web-app:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event.inputs.stage == 'web-app' }}
-  #   needs: deploy-infra
-
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up kubectl
-  #       uses: azure/setup-kubectl@v3
-  #       with:
-  #         version: 'latest'
-
-  #     - name: Install gettext for envsubst
-  #       run: sudo apt-get install -y gettext-base
-
-  #     - name: Set up Kubeconfig
-  #       run: |
-  #         mkdir -p $HOME/.kube
-  #         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
-  #         chmod 600 $HOME/.kube/config
-
-  #     - name: Render Cert-Manager template with envsubst
-  #       env:
-  #         EMAIL_21_VEK: ${{ secrets.EMAIL_21_VEK }}
-  #         INGRESS_IP: ${{ secrets.INGRESS_IP }}
-  #       run: |
-  #         envsubst < app/app/cert-manager-template.yml > app/app/cert-manager.yml
-
-  #     - name: Render Cert-Manager template with envsubst
-  #       env:
-  #         EMAIL_21_VEK: ${{ secrets.EMAIL_21_VEK }}
-  #         INGRESS_IP: ${{ secrets.INGRESS_IP }}
-  #       run: |
-  #         envsubst < app/app/ingress-template.yml > app/app/ingress.yml
-
-  #     - name: Deploy Web app
-  #       run: |
-  #         kubectl apply -f ingress.yml
-  #         kubectl apply -f cert-manager.yml
-  #         kubectl apply -f app.yml
