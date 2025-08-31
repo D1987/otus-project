@@ -19,7 +19,7 @@ spec:
     helm:
       releaseName: ingress-nginx
       valueFiles:
-        - $values-repo/helm-values/ingress-nginx/values.yml
+        - $values-repo/app/helm-values/ingress-nginx/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx
@@ -50,7 +50,7 @@ spec:
     helm:
       releaseName: cert-manager
       valueFiles:
-        - $values-repo/helm-values/cert-manager/values.yml
+        - $values-repo/app/helm-values/cert-manager/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
@@ -81,7 +81,7 @@ spec:
     helm:
       releaseName: loki-stack
       valueFiles:
-        - $values-repo/helm-values/monitoring/values.yml
+        - $values-repo/app/helm-values/monitoring/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: loki
