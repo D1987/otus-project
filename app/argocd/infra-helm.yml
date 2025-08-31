@@ -3,20 +3,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app
+  name: ingress-nginx
   namespace: argocd
   finalizers:
     - resources-finalizer.argoproj.io/background
 spec:
   project: infra-project
   source:
-    repoURL: https://kubernetes.github.io/ingress-nginx
+  - repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
     targetRevision: 4.13.2
+  - repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: project
+    ref: values-repo
     helm:
       releaseName: ingress-nginx
       valueFiles:
-        - ../helm-values/ingress-nginx/values.yml
+        - $values-repo/helm-values/ingress-nginx/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx
@@ -38,13 +41,16 @@ metadata:
 spec:
   project: infra-project
   source:
-    repoURL: https://charts.jetstack.io
+  - repoURL: https://charts.jetstack.io
     chart: cert-manager
     targetRevision: v1.14.4
+  - repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: project
+    ref: values-repo
     helm:
       releaseName: cert-manager
       valueFiles:
-        - ../helm-values/cert-manager/values.yml
+        - $values-repo/helm-values/cert-manager/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
@@ -66,13 +72,16 @@ metadata:
 spec:
   project: infra-project
   source:
-    repoURL: https://grafana.github.io/helm-charts
+  - repoURL: https://grafana.github.io/helm-charts
     chart: loki-stack
     targetRevision: 3.5.0
+  - repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: project
+    ref: values-repo
     helm:
       releaseName: loki-stack
       valueFiles:
-        - ../helm-values/monitoring/values.yml
+        - $values-repo/helm-values/monitoring/values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: loki

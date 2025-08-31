@@ -29,6 +29,12 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
+
+      - name: Install Yandex Cloud CLI
+        run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        
+      - name: Init yc in PATH
+        run: echo "${HOME}/yandex-cloud/bin" >> $GITHUB_PATH
       
       - name: Install gettext for envsubst
         run: sudo apt-get install -y gettext-base
