@@ -2,6 +2,9 @@ name: Deploy via ArgoCD
 
 run-name: ${{ github.actor }} is deploying via ArgoCD
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
