@@ -1,16 +1,66 @@
-name: Deploy to Yandex Kubernetes
+name: Deploy via ArgoCD
 
-run-name: ${{ github.actor }} is testing out GitHub Actions
+run-name: ${{ github.actor }} is deploying via ArgoCD
 
 on:
-  # push:
-  #   branches:
-  #     - main
   workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Select deployment stage'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - infra
+          - apps
+          - web-app
+          - both
 
 jobs:
-  deploy:
+  deploy-infra:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'infra' || github.event.inputs.stage == 'both' }}
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Install gettext for envsubst
+        run: sudo apt-get install -y gettext-base
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Render Loki template with envsubst
+        env:
+          EMAIL_GMAIL: ${{ secrets.EMAIL_GMAIL }}
+          APP_PASS: ${{ secrets.APP_PASS }}
+          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+        run: |
+          envsubst < app/helm-values/monitoring/values-template.yml > app/helm-values/monitoring/values.yml
+
+      - name: Create Projects
+        run: |
+          kubectl apply -f app/argocd/app-project.yml -n argocd
+          kubectl apply -f app/argocd/infra-project.yml -n argocd
+
+      - name: Deploy Infra app
+        run: |
+          kubectl apply -f app/argocd/infra-helm.yml -n argocd
+
+  deploy-app-project:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'apps' || github.event.inputs.stage == 'both' }}
+    needs: deploy-infra
 
     steps:
       - name: Checkout repo
@@ -27,6 +77,49 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
-      - name: Deploy to Kubernetes
+      - name: Deploy Web app
         run: |
-          kubectl apply -f k8s/app/kubernetes-manifests.yaml
+          kubectl apply -f app/argocd/web-app.yml -n argocd
+
+  # deploy-web-app:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.inputs.stage == 'web-app' }}
+  #   needs: deploy-infra
+
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up kubectl
+  #       uses: azure/setup-kubectl@v3
+  #       with:
+  #         version: 'latest'
+
+  #     - name: Install gettext for envsubst
+  #       run: sudo apt-get install -y gettext-base
+
+  #     - name: Set up Kubeconfig
+  #       run: |
+  #         mkdir -p $HOME/.kube
+  #         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+  #         chmod 600 $HOME/.kube/config
+
+  #     - name: Render Cert-Manager template with envsubst
+  #       env:
+  #         EMAIL_21_VEK: ${{ secrets.EMAIL_21_VEK }}
+  #         INGRESS_IP: ${{ secrets.INGRESS_IP }}
+  #       run: |
+  #         envsubst < app/app/cert-manager-template.yml > app/app/cert-manager.yml
+
+  #     - name: Render Cert-Manager template with envsubst
+  #       env:
+  #         EMAIL_21_VEK: ${{ secrets.EMAIL_21_VEK }}
+  #         INGRESS_IP: ${{ secrets.INGRESS_IP }}
+  #       run: |
+  #         envsubst < app/app/ingress-template.yml > app/app/ingress.yml
+
+  #     - name: Deploy Web app
+  #       run: |
+  #         kubectl apply -f ingress.yml
+  #         kubectl apply -f cert-manager.yml
+  #         kubectl apply -f app.yml

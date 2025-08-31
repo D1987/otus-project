@@ -45,7 +45,6 @@ cd infra/scripts
 Заполнить раздел '### Вводные данные в файле prepare.sh'
 ./prepare.sh
 
-
 # 2. Развернуть инфраструктуру
 cd ../terraform
 На основе файла template.tfvars создать файл terraform.tfvars с необходимыми переменными для доступа к YC.
@@ -55,52 +54,52 @@ terraform validate
 terraform plan
 terraform apply
 
-# 3. Создать k8s конфиг
-yc managed-kubernetes cluster get-credentials homework-k8s --external
-
-# 4. Убедится что кластер доступен и работает
+# 3. Убедится что кластер доступен и работает
 kubectl get no -o wide
 
-# 5. Получить секреты для доступа в S3
+# CICD Поставить арго
 cd ../scripts
-./get-s3-secrets.sh
+./install-argo.sh i
 
-Добавить значения - 'secretAccessKey', 'accessKeyId' в файл
-- app/logging/values-loki.yml
+# 4. Получить секреты для доступа в S3
 
+../scripts/get-s3-secrets.sh
 
-# 6. Установка дополнительных сервисов в кластер
-cd ../../app/scripts
-./install.sh
-
-После установки ingress-nginx, найти его внешний ip установить в следующих фйалах:
-- app/app/cert-manager.yml
-- app/app/ingress.yml
+# Сохранить в гитхаб секреты
 
 ## Развертывание приложения в кластере
 
 # 1. Подготовить токен для деплоя в куб с помощью github actions
     ```
-        TOKEN=$(yc iam create-token)
+        TOKEN=$(yc iam create-token)  ??????????
         cat ~/.kube/config | base64 -w0
     ````
 
 # 2. Cохранить токен в github секретах 'KUBE_CONFIG_DATA'
+
+ Развернуть infra app > github actions
+
+ Сохранить ингресс ip в гитхаб секрет
+
+ Графана contact point
+
+ Развернуть приложение
+
 
 # 3. Cделать пуш в github. Создать Pull Request в Main ветку. Это запустит автоматически деплой приложения в кластер.
 
 После деплоя, приложение будет доступно по адрессу https://158.160.187.124.sslip.io
 Используется сервис sslip.io
 
+
 ##################################
 
+IP в ингрес и серт менеджер
+поменять урл серт менеджера
 
 
 # Get SA Ingress key
 ./scripts/sa-ingress-key.sh
-
-# Install Ingress
-./scripts/install.sh
 
 # Cleaning
 After terraform destroy delete homework/yc from .kube/congfig

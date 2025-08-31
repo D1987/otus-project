@@ -4,13 +4,13 @@ loki:
   image:    
     tag: 2.9.3 
 
-  # nodeSelector:
-  #   role: infra
-  # tolerations:
-  #   - key: "node-role"
-  #     operator: "Equal"
-  #     value: "infra"
-  #     effect: "NoSchedule"
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
   commonConfig:
     replication_factor: 1
 
@@ -47,9 +47,9 @@ loki:
       # AWS region where the S3 bucket is located
       region: ru-central1
       # AWS secret access key
-      secretAccessKey: 
+      secretAccessKey: ${SECRET_ACCESS_KEY}
       # AWS access key ID
-      accessKeyId: 
+      accessKeyId: ${ACCESS_KEY_ID}
       # AWS signature version (e.g., v2 or v4)
       signatureVersion: v4
       # Forces the path style for S3 (true/false)
@@ -154,13 +154,12 @@ promtail:
     serverPort: 3101
     clients:
       - url: http://{{ .Release.Name }}:3100/loki/api/v1/push
-
-  # tolerations:
-  # - key: "node-role"
-  #   operator: "Equal"
-  #   value: "infra"
-  #   effect: "NoSchedule"
-  # nodeSelector: {}
+  tolerations:
+  - key: "node-role"
+    operator: "Equal"
+    value: "infra"
+    effect: "NoSchedule"
+  nodeSelector: {}
 
 # GRAFANA
 grafana:
@@ -190,19 +189,19 @@ grafana:
     smtp:
       enabled: true
       host: smtp.gmail.com:587
-      user: dzmitry.zimin@gmail.com
-      password: ""
-      from_address: dzmitry.zimin@gmail.com
+      user: ${EMAIL_GMAIL}
+      password: ${APP_PASS}
+      from_address: ${EMAIL}
       from_name: Grafana
       skip_verify: false
   
-  # nodeSelector:
-#   role: infra
-# tolerations:
-#   - key: "node-role"
-#     operator: "Equal"
-#     value: "infra"
-#     effect: "NoSchedule"
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
 # PROMETHEUS
 prometheus:
@@ -212,13 +211,13 @@ prometheus:
   datasource:
     jsonData: "{}"
   
-  # nodeSelector:
-#   role: infra
-# tolerations:
-#   - key: "node-role"
-#     operator: "Equal"
-#     value: "infra"
-#     effect: "NoSchedule"
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
 # TEST-POD
 test_pod:

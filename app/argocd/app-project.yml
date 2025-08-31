@@ -1,8 +1,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: otus
-  namespace: argo-cd
+  name: app-project
+  namespace: argocd
 spec:
   description: "Project for OTUS"
   sourceRepos:

@@ -6,7 +6,7 @@ metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: d.zimin@21vek.by
+    email: ${EMAIL_21_VEK}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod
@@ -26,4 +26,4 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - 158.160.187.124.sslip.io
+    - ${INGRESS_IP}.sslip.io

@@ -2,13 +2,13 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: app
-  namespace: argo-cd
+  namespace: argocd
 spec:
-  project: otus
+  project: app-project
   source:
     repoURL: https://github.com/D1987/otus-project.git
     targetRevision: HEAD
-    path: app
+    path: app/app
   destination:
     server: https://kubernetes.default.svc
     namespace: app
