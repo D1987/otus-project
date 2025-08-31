@@ -1,37 +1,9 @@
 # Ingress
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: ingress-nginx
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argoproj.io/background
-spec:
-  project: infra-project
-  source:
-    repoURL: https://github.com/D1987/otus-project.git
-    targetRevision: project
-    path: app/helm-apps/ingress-nginx
-    helm:
-      releaseName: ingress-nginx
-      valueFiles:
-        - values.yml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: ingress-nginx
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-    - CreateNamespace=true
 # ---
-# # Cert-manager
 # apiVersion: argoproj.io/v1alpha1
 # kind: Application
 # metadata:
-#   name: cert-manager
+#   name: ingress-nginx
 #   namespace: argocd
 #   finalizers:
 #     - resources-finalizer.argoproj.io/background
@@ -40,21 +12,50 @@ spec:
 #   source:
 #     repoURL: https://github.com/D1987/otus-project.git
 #     targetRevision: project
+#     path: app/helm-apps/ingress-nginx
 #     helm:
-#       releaseName: cert-manager
+#       releaseName: ingress-nginx
 #       valueFiles:
-#         - app/helm-apps/cert-manager/values.yml
+#         - values.yml
 #   destination:
 #     server: https://kubernetes.default.svc
-#     namespace: cert-manager
+#     namespace: ingress-nginx
 #   syncPolicy:
 #     automated:
-#       prune: true
 #       selfHeal: true
+#       prune: true
 #     syncOptions:
-#       - CreateNamespace=true
-# ---
-# # loki-stack
+#     - CreateNamespace=true
+---
+# Cert-manager
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argoproj.io/background
+spec:
+  project: infra-project
+  source:
+    repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: project
+    path: app/helm-apps/cert-manager
+    helm:
+      releaseName: cert-manager
+      valueFiles:
+        - values.yml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# loki-stack
 # apiVersion: argoproj.io/v1alpha1
 # kind: Application
 # metadata:
@@ -67,10 +68,11 @@ spec:
 #   source:
 #     repoURL: https://github.com/D1987/otus-project.git
 #     targetRevision: project
+#     path: app/helm-apps/loki-stack
 #     helm:
 #       releaseName: loki-stack
 #       valueFiles:
-#         - app/helm-apps/loki-stack/values.yml
+#         - values.yml
 #   destination:
 #     server: https://kubernetes.default.svc
 #     namespace: loki
