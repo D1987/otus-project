@@ -74,7 +74,7 @@ spec:
   sources:
   - repoURL: https://grafana.github.io/helm-charts
     chart: loki-stack
-    targetRevision: 3.5.0
+    targetRevision: 2.10.2
   - repoURL: https://github.com/D1987/otus-project.git
     targetRevision: project
     ref: values-repo
