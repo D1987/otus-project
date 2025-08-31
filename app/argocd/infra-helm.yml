@@ -71,6 +71,10 @@ spec:
     path: app/helm-apps/loki-stack
     helm:
       releaseName: loki-stack
+      values: |
+        email: "${EMAIL_GMAIL}"
+        accessKey: "${ACCESS_KEY_ID}"
+        secretKey: "${SECRET_ACCESS_KEY}"
       valueFiles:
         - values.yml
   destination:
