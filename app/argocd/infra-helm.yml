@@ -12,10 +12,11 @@ spec:
   source:
     repoURL: https://github.com/D1987/otus-project.git
     targetRevision: project
+    path: app/helm-apps/ingress-nginx
     helm:
       releaseName: ingress-nginx
       valueFiles:
-        - app/helm-apps/ingress-nginx/values.yml
+        - values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

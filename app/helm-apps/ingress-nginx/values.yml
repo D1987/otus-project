@@ -3,6 +3,10 @@ controller:
     type: LoadBalancer
   minReadySeconds: 30
   progressDeadlineSeconds: 600
+
+  admissionWebhooks:
+    enabled: false
+
   nodeSelector:
     role: infra
   tolerations:
