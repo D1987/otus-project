@@ -8,12 +8,11 @@ on:
       stage:
         description: 'Select deployment stage'
         required: true
-        default: 'both'
+        default: 'app'
         type: choice
         options:
           - infra
-          - apps
-          - web-app
+          - app
           - both
 
 jobs:
@@ -59,7 +58,7 @@ jobs:
 
   deploy-app-project:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.stage == 'apps' || github.event.inputs.stage == 'both' }}
+    if: ${{ github.event.inputs.stage == 'app' || github.event.inputs.stage == 'both' }}
     needs: deploy-infra
 
     steps:

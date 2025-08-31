@@ -106,3 +106,5 @@ IP в ингрес и серт менеджер
 # Cleaning
 After terraform destroy delete homework/yc from .kube/congfig
 
+kubectl patch application loki-stack -n argocd \
+  -p '{"metadata":{"finalizers":[]}}' --type=merge
