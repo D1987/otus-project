@@ -45,7 +45,7 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         run: |
-          envsubst < app/helm-values/monitoring/values-template.yml > app/helm-values/monitoring/values.yml
+          envsubst < app/helm-apps/loki-stack/values-template.yml > app/helm-apps/loki-stack/values.yml
 
       - name: Create Projects
         run: |
