@@ -58,11 +58,9 @@ terraform apply
 kubectl get no -o wide
 
 # CICD Поставить арго
-cd ../scripts
-./install-argo.sh i
+Запускаем арго в CICD
 
 # 4. Получить секреты для доступа в S3
-
 ../scripts/get-s3-secrets.sh
 
 # Сохранить в гитхаб секреты

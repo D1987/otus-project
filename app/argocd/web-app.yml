@@ -9,6 +9,9 @@ spec:
     repoURL: https://github.com/D1987/otus-project.git
     targetRevision: HEAD
     path: app/app
+    directory:
+      recurse: false
+      include: app.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: app

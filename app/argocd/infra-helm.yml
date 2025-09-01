@@ -54,35 +54,35 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
----
+# ---
 # loki-stack
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: loki-stack
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argoproj.io/background
-spec:
-  project: infra-project
-  source:
-    repoURL: https://github.com/D1987/otus-project.git
-    targetRevision: project
-    path: app/helm-apps/loki-stack
-    helm:
-      releaseName: loki-stack
-      values: |
-        email: "${EMAIL_GMAIL}"
-        accessKey: "${ACCESS_KEY_ID}"
-        secretKey: "${SECRET_ACCESS_KEY}"
-      valueFiles:
-        - values.yml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: loki
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: loki-stack
+#   namespace: argocd
+#   finalizers:
+#     - resources-finalizer.argoproj.io/background
+# spec:
+#   project: infra-project
+#   source:
+#     repoURL: https://github.com/D1987/otus-project.git
+#     targetRevision: project
+#     path: app/helm-apps/loki-stack
+#     helm:
+#       releaseName: loki-stack
+#       values: |
+#         email: "${EMAIL_GMAIL}"
+#         accessKey: "${ACCESS_KEY_ID}"
+#         secretKey: "${SECRET_ACCESS_KEY}"
+#       valueFiles:
+#         - values.yml
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: loki
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
