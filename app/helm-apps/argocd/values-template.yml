@@ -1,9 +1,11 @@
-configs:
-  cm:
-    url: "${INGRESS_IP}.argo.sslip.io"
+global:
+  # -- Default domain used by all components
+  ## Used for ingresses, certificates, SSO, notifications, etc.
+  domain: ${INGRESS_IP}.argo.sslip.io
 
+configs:
   params:
-    server.insecure: "true"
+    server.insecure: true
 
 controller:
   nodeSelector:
