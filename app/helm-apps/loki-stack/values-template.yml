@@ -1,5 +1,6 @@
 # LOKI
 loki:
+  enabled: true
   auth_enabled: false
   image:    
     tag: 2.9.3 

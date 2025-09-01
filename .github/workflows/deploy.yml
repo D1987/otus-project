@@ -135,6 +135,7 @@ jobs:
 
       - name: Deploy Dashboards and Alert
         run: |
+          kubectl apply -f app/helm-apps/loki-stack/namespace.yml
           kubectl apply -f app/helm-apps/loki-stack/app-alert-cm.yml
           kubectl apply -f app/helm-apps/loki-stack/app-dashboards-cm.yml
           kubectl apply -f app/helm-apps/loki-stack/k8s-dashboards-cm.yml
@@ -149,7 +150,7 @@ jobs:
           helm upgrade --install loki grafana/loki-stack \
             --namespace loki \
             --create-namespace \
-            -f app/helm-apps/loki-stack/values.yml
+            --values app/helm-apps/loki-stack/values.yml
 
   deploy-app-project:
     runs-on: ubuntu-latest
