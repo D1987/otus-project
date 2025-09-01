@@ -164,9 +164,6 @@ promtail:
 # GRAFANA
 grafana:
   enabled: true
-  service:
-    type: LoadBalancer
-    port: 3000
   sidecar:
     datasources:
       label: ""
@@ -191,7 +188,7 @@ grafana:
       host: smtp.gmail.com:587
       user: ${EMAIL_GMAIL}
       password: ${APP_PASS}
-      from_address: ${EMAIL}
+      from_address: ${EMAIL_GMAIL}
       from_name: Grafana
       skip_verify: false
   

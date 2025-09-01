@@ -57,6 +57,7 @@ jobs:
             --create-namespace
             --values "app/helm-apps/argocd/values.yml"
 
+  # Деплой с помощью арго
   deploy-infra:
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.stage == 'infra' || github.event.inputs.stage == 'all-infra' }}
