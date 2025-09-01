@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-grafana
+  name: ingress-argo
   namespace: loki
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -12,17 +12,10 @@ spec:
     - host: ${INGRESS_IP}.sslip.io
       http:
         paths:
-          - path: /grafana(/|$)(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: loki-grafana
-                port:
-                  number: 80
           - path: /argocd(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: argocd-server
                 port:
-                  number: 8080
+                  number: 80

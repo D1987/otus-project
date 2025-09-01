@@ -183,6 +183,9 @@ grafana:
   image:
     tag: 10.3.3
   grafana.ini:
+    server:
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+      serve_from_sub_path: true
     smtp:
       enabled: true
       host: smtp.gmail.com:587

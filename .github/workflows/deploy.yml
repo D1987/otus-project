@@ -172,12 +172,14 @@ jobs:
         run: |
           envsubst < app/app/ingress-template.yml > app/app/ingress.yml
           envsubst < app/app/ingress-grafana-template.yml > app/app/ingress-grafana.yml
+          envsubst < app/app/ingress-argo-template.yml > app/app/ingress-argo.yml
 
       - name: Deploy Cert-Manager and Ingress
         run: |
           kubectl apply -f app/app/namespace.yml
           kubectl apply -f app/app/ingress.yml
           kubectl apply -f app/app/ingress-grafana.yml
+          kubectl apply -f app/app/ingress-argo.yml
           kubectl apply -f app/app/cert-manager.yml
 
       - name: Deploy Web app
