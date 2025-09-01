@@ -9,7 +9,7 @@ spec:
   project: app-project
   source:
     repoURL: https://github.com/D1987/otus-project.git
-    targetRevision: HEAD
+    targetRevision: project
     path: app/app/web
   destination:
     server: https://kubernetes.default.svc
