@@ -174,7 +174,8 @@ jobs:
 
       - name: Deploy Cert-Manager and Ingress
         run: |
-          kubectl apply -f app/app/ingress.yml --namespace=app --create-namespace
+          kubectl apply -f app/app/namespace.yml
+          kubectl apply -f app/app/ingress.yml
           kubectl apply -f app/app/cert-manager.yml
 
       - name: Deploy Web app
