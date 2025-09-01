@@ -2,8 +2,8 @@
 loki:
   enabled: true
 
-  image:
-    tag: 2.9.3
+  # image:
+  #   tag: 2.9.3
 
   nodeSelector:
     role: infra
