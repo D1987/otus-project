@@ -60,8 +60,8 @@ jobs:
         run: |
           helm upgrade --install argocd argo/argo-cd \
             --namespace argocd \
-            --create-namespace
-            -f app/helm-apps/argocd/values.yml
+            --create-namespace \
+            --values app/helm-apps/argocd/values.yml
 
   # Деплой с помощью арго
   deploy-infra:
@@ -141,8 +141,9 @@ jobs:
       - name: Deploy Loki Stack
         run: |
           helm upgrade --install loki grafana/loki-stack \
-            --namespace loki --create-namespace \
-            -f app/helm-apps/loki-stack/values.yml
+            --namespace loki \
+            --create-namespace \
+            --values app/helm-apps/loki-stack/values.yml
 
   deploy-app-project:
     runs-on: ubuntu-latest
