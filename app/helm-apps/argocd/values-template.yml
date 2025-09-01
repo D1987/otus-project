@@ -1,3 +1,10 @@
+configs:
+  cm:
+    url: "${INGRESS_IP}.argo.sslip.io"
+
+  params:
+    server.insecure: "true"
+
 controller:
   nodeSelector:
     role: infra
