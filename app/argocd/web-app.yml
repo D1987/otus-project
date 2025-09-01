@@ -13,7 +13,7 @@ spec:
     path: app/app
     directory:
       recurse: false
-      include: app.yaml
+      include: app.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: app
