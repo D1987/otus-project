@@ -13,26 +13,50 @@ loki:
 
   config:  # попадёт в /etc/loki/loki.yaml
     auth_enabled: false
-    schema_config:
+    schemaConfig:
       configs:
-        - from: "2025-08-12"
+        - from: "2025-06-01"
           store: tsdb
-          object_store: aws
+          object_store: s3
           schema: v13
           index:
             prefix: loki_index_
             period: 24h
     storage_config:
       aws:
-        s3: s3://loki-logs-s3-project
         region: ru-central1
-        endpoint: storage.yandexcloud.net
-        access_key_id: ${ACCESS_KEY_ID}
-        secret_access_key: ${SECRET_ACCESS_KEY}
-        s3forcepathstyle: true
+        bucketnames: loki-logs-s3-homework
+        s3forcepathstyle: false
+    pattern_ingester:
+        enabled: true
     limits_config:
       allow_structured_metadata: true
-      retention_period: 10h
+      volume_enabled: true
+      retention_period: 10h # 28 days retention
+
+    storage:
+      type: s3
+      bucketNames:
+          chunks: loki-logs
+          ruler: loki-logs
+          admin: loki-log
+      s3:
+        # AWS endpoint URL
+        endpoint: storage.yandexcloud.net
+        # AWS region where the S3 bucket is located
+        region: ru-central1
+        # AWS secret access key
+        secretAccessKey:
+        # AWS access key ID
+        accessKeyId:
+        # AWS signature version (e.g., v2 or v4)
+        signatureVersion: v4
+        # Forces the path style for S3 (true/false)
+        s3ForcePathStyle: false
+        # Allows insecure (HTTP) connections (true/false)
+        insecure: false
+        # HTTP configuration settings
+        http_config: {}
 
   deploymentMode: SingleBinary
   singleBinary:
