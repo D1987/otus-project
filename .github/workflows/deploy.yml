@@ -123,6 +123,7 @@ jobs:
           APP_PASS: ${{ secrets.APP_PASS }}
           SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          INGRESS_IP: ${{ secrets.INGRESS_IP }}
         run: |
           envsubst < app/helm-apps/loki-stack/values-template.yml > app/helm-apps/loki-stack/values.yml
 

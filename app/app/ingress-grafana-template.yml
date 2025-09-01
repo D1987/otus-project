@@ -5,6 +5,10 @@ metadata:
   namespace: loki
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+      - ${INGRESS_IP}.grafana.sslip.io
+      secretName: app-tls-secret-grafana
   rules:
     - host: ${INGRESS_IP}.grafana.sslip.io
       http:
