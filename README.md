@@ -57,18 +57,21 @@ terraform apply
 # 3. Убедится что кластер доступен и работает
 kubectl get no -o wide
 
-# CICD Поставить арго
-Запускаем арго в CICD
-
 # 4. Получить секреты для доступа в S3
 ../scripts/get-s3-secrets.sh
 
 # Сохранить в гитхаб секреты
+access_key
+secret_access_key
 
 ## Развертывание приложения в кластере
 
 # 1. Подготовить токен для деплоя в куб с помощью github actions
     ```
+
+script make copy config
+
+
     yc managed-kubernetes cluster get-credentials homework-k8s --external
 
         TOKEN=$(yc iam create-token)  ??????????
@@ -76,6 +79,11 @@ kubectl get no -o wide
     ````
 
 # 2. Cохранить токен в github секретах 'KUBE_CONFIG_DATA'
+
+# CICD Поставить арго
+Запускаем арго в github CICD
+port-forward
+
 
  Развернуть infra app > github actions
 

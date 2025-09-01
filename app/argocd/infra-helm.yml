@@ -6,7 +6,7 @@ metadata:
   name: ingress-nginx
   namespace: argocd
   finalizers:
-    - resources-finalizer.argoproj.io/background
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: infra-project
   source:
@@ -34,7 +34,7 @@ metadata:
   name: cert-manager
   namespace: argocd
   finalizers:
-    - resources-finalizer.argoproj.io/background
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: infra-project
   source:
