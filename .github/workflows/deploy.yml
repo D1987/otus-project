@@ -140,7 +140,6 @@ jobs:
   deploy-app-project:
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.stage == 'app' }}
-    needs: deploy-infra
 
     steps:
       - name: Checkout repo

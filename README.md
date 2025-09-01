@@ -84,10 +84,10 @@ script make copy config
 Запускаем арго в github CICD
 port-forward
 
-
  Развернуть infra app > github actions
 
  Сохранить ингресс ip в гитхаб секрет
+
 
  Графана contact point
 
