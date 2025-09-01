@@ -11,31 +11,25 @@ loki:
       value: "infra"
       effect: "NoSchedule"
 
-  config:  # пойдёт в /etc/loki/loki.yaml
+  config:  # попадёт в /etc/loki/loki.yaml
     auth_enabled: false
     schema_config:
       configs:
         - from: "2025-08-12"
           store: tsdb
-          object_store: s3
+          object_store: aws
           schema: v13
           index:
             prefix: loki_index_
             period: 24h
     storage_config:
       aws:
+        s3: s3://loki-logs-s3-project
         region: ru-central1
-        bucketnames: loki-logs-s3-project
-        s3forcepathstyle: false
-      s3:
         endpoint: storage.yandexcloud.net
-        region: ru-central1
-        accessKeyId: ${ACCESS_KEY_ID}
-        secretAccessKey: ${SECRET_ACCESS_KEY}
-        signatureVersion: v4
-        s3ForcePathStyle: false
-        insecure: false
-        http_config: {}
+        access_key_id: ${ACCESS_KEY_ID}
+        secret_access_key: ${SECRET_ACCESS_KEY}
+        s3forcepathstyle: true
     limits_config:
       allow_structured_metadata: true
       retention_period: 10h
@@ -43,15 +37,7 @@ loki:
   deploymentMode: SingleBinary
   singleBinary:
     replicas: 1
-    # resources:
-    #   limits:
-    #     cpu: 3
-    #     memory: 4Gi
-    #   requests:
-    #     cpu: 2
-    #     memory: 2Gi
     extraEnv:
-      # Keep a little bit lower than memory limits
       - name: GOMEMLIMIT
         value: 3750MiB
 
@@ -59,18 +45,16 @@ loki:
     enabled: false
     allocatedMemory: 10MB
 
-  # Disable minio storage
   minio:
     enabled: false
 
-  # Zero out replica counts of other deployment modes
+  # Обнуляем остальные реплики
   backend:
     replicas: 0
   read:
     replicas: 0
   write:
     replicas: 0
-
   ingester:
     replicas: 0
   querier:
