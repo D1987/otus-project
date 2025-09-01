@@ -45,9 +45,9 @@ loki:
       # AWS region where the S3 bucket is located
       region: ru-central1
       # AWS secret access key
-      secretAccessKey:
+      secretAccessKey: ${SECRET_ACCESS_KEY}
       # AWS access key ID
-      accessKeyId:
+      accessKeyId: ${ACCESS_KEY_ID}
       # AWS signature version (e.g., v2 or v4)
       signatureVersion: v4
       # Forces the path style for S3 (true/false)
@@ -57,82 +57,82 @@ loki:
       # HTTP configuration settings
       http_config: {}
 
-  deploymentMode: SingleBinary
-  singleBinary:
-    replicas: 1
-    extraEnv:
-      - name: GOMEMLIMIT
-        value: 3750MiB
+deploymentMode: SingleBinary
+singleBinary:
+  replicas: 1
+  extraEnv:
+    - name: GOMEMLIMIT
+      value: 3750MiB
 
-  chunkCache:
-    enabled: false
-    allocatedMemory: 10MB
+chunkCache:
+  enabled: false
+  allocatedMemory: 10MB
 
-  minio:
-    enabled: false
+minio:
+  enabled: false
 
-  # Обнуляем остальные реплики
-  backend:
-    replicas: 0
-  read:
-    replicas: 0
-  write:
-    replicas: 0
-  ingester:
-    replicas: 0
-  querier:
-    replicas: 0
-    max_concurrent: 2
-  queryFrontend:
-    replicas: 0
-  queryScheduler:
-    replicas: 0
-  distributor:
-    replicas: 0
-  compactor:
-    replicas: 0
-  indexGateway:
-    replicas: 0
-  bloomCompactor:
-    replicas: 0
-  bloomGateway:
-    replicas: 0
+# Обнуляем остальные реплики
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+ingester:
+  replicas: 0
+querier:
+  replicas: 0
+  max_concurrent: 2
+queryFrontend:
+  replicas: 0
+queryScheduler:
+  replicas: 0
+distributor:
+  replicas: 0
+compactor:
+  replicas: 0
+indexGateway:
+  replicas: 0
+bloomCompactor:
+  replicas: 0
+bloomGateway:
+  replicas: 0
 
-  gateway:
-    nodeSelector:
-      role: infra
-    tolerations:
-      - key: "node-role"
-        operator: "Equal"
-        value: "infra"
-        effect: "NoSchedule"
+gateway:
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
-  lokiCanary:
-    nodeSelector:
-      role: infra
-    tolerations:
-      - key: "node-role"
-        operator: "Equal"
-        value: "infra"
-        effect: "NoSchedule"
+lokiCanary:
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
-  chunksCache:
-    nodeSelector:
-      role: infra
-    tolerations:
-      - key: "node-role"
-        operator: "Equal"
-        value: "infra"
-        effect: "NoSchedule"
+chunksCache:
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
-  resultsCache:
-    nodeSelector:
-      role: infra
-    tolerations:
-      - key: "node-role"
-        operator: "Equal"
-        value: "infra"
-        effect: "NoSchedule"
+resultsCache:
+  nodeSelector:
+    role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
 
 # PROMTAIL
 promtail:
