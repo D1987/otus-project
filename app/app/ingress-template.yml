@@ -4,7 +4,8 @@ metadata:
   name: ingress-app
   namespace: app
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   tls:
@@ -22,15 +23,15 @@ spec:
                 name: frontend-external
                 port:
                   number: 80
-          - path: /grafana
-            pathType: Prefix
+          - path: /grafana(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: loki-grafana
                 port:
                   number: 3000
-          - path: /argocd
-            pathType: Prefix
+          - path: /argocd(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: argocd-server
