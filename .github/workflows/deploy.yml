@@ -61,7 +61,7 @@ jobs:
           helm upgrade --install argocd argo/argo-cd \
             --namespace argocd \
             --create-namespace
-            --values "app/helm-apps/argocd/values.yml"
+            -f app/helm-apps/argocd/values.yml
 
   # Деплой с помощью арго
   deploy-infra:
