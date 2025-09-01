@@ -77,7 +77,6 @@ script make copy config
         TOKEN=$(yc iam create-token)  ??????????
         cat ~/.kube/config | base64 -w0
     ````
-
 # 2. Cохранить токен в github секретах 'KUBE_CONFIG_DATA'
 
 # CICD Поставить арго
