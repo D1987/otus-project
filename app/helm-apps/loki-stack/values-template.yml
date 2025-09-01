@@ -182,6 +182,7 @@ grafana:
       searchNamespace: loki
   image:
     tag: 10.3.3
+
   grafana.ini:
     server:
       root_url: https://${INGRESS_IP}.grafana.sslip.io/

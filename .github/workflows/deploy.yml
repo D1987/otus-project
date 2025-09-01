@@ -133,6 +133,12 @@ jobs:
         run: |
           envsubst < app/helm-apps/loki-stack/values-template.yml > app/helm-apps/loki-stack/values.yml
 
+      - name: Deploy Dashboards and Alert
+        run: |
+          kubectl apply -f app/helm-apps/loki-stack/app-alert-cm.yml
+          kubectl apply -f app/helm-apps/loki-stack/app-dashboards-cm.yml
+          kubectl apply -f app/helm-apps/loki-stack/k8s-dashboards-cm.yml
+
       - name: Add Loki Helm repo
         run: |
           helm repo add grafana https://grafana.github.io/helm-charts
