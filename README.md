@@ -111,9 +111,15 @@
 
 ## 5. Установить локи стек
 
+## 5.1. Установить 2 переменные (https://github.com/D1987/otus-project/settings/secrets/actions)
+
+- EMAIL_21_VEK - куда отправлять графана алерт
+
+- EMAIL_GMAIL - кто будет отправлять
+
 Запустить стейдж `loki` в Run workflow
 
-## 5.1. Получить графана admin прароль
+## 5.2. Получить графана admin пароль
 
 `kubectl get secret --namespace loki loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
 
