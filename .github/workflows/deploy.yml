@@ -1,4 +1,4 @@
-name: Deploy via ArgoCD
+name: Разертывание Приложений
 
 run-name: ${{ github.actor }} is deploying via ArgoCD
 
@@ -90,11 +90,7 @@ jobs:
 
       - name: Deploy Infra app
         run: |
-          kubectl apply -f app/argocd/infra-helm.yml -n argocd
-
-      - name: Deploy Loki-Stack
-        run: |
-          kubectl apply -f app/argocd/infra-helm.yml -n argocd
+          kubectl apply -f app/argocd/infra-helm-app.yml -n argocd
       
   deploy-loki-stack:
     runs-on: ubuntu-latest

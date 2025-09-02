@@ -1,3 +1,5 @@
+# Otus-Project
+
 Данный проект предназначен для развертывания микросервисного приложения.
 
 В качесте облачного решения используется Яндекс облако (YC)
@@ -10,105 +12,123 @@
 
 Для развертывания инфраструктуры используется terraform.
 
-Для деплоя приложения используется Github Actions.
+Для деплоя приложений платформы и самого микросервисного приложения используются Github Actions.
 
 Проект состоит из трех основных директорий:
 - .github
 - app
 - infra
  
-.github - содержит:
-    Файл для автоматизированного деплоя приложения workflows/deploy.yml
+## .github - содержит:
+    workflows/deploy.yml - файл для автоматизированного деплоя приложения 
 
-app - содержит:
-    app - основное приложение Online Boutique
-    scripts - установка установка дополнительных приложений с помощью helm
-    cert-manager - менеджер сертификатов
-    ingress - ингресс
-    loki-stack - локи стек
+## app - содержит:
+    - app
+        - web - директория содержит манифест основного приложения Online Boutique
+        - манифесты неймспейса, ингресса, серт менеджера
+    - argocd - директория содержит манифесты создание проектов и приложений в арго
+    - helm-apps - содержит необходимые файлы для устанвки приложения платформы с помощью helm + github actions
+        - argocd - директория содержит values для установки арго
+        - cert-manager - директория содержит values для установки серт менеджера
+        - ingress-nginx - директория содержит values для установки ингресс
+        - loki-stack - директория содержит values для установки локи стека
 
-infra - содержит terraform сетап на основе модулей для разворачивания инфраструктуры:
-    МОДУЛИ
-    iam - сервис аккаунты
-    network - сеть
-    storage - сторедж
-    k8s - кластер
+## infra - содержит terraform сетап на основе модулей для разворачивания инфраструктуры:
+    - scripts - содержит 3 скрипта:
+        - prepare.sh - первоначальная подготовка сервис аккаунта и установка необходимых инструметов. Запускается один раз вначале
+        - get-s3-secrets.sh - получение секрет и аксес ключа для яндекс s3 хранилища. Запускается после развертывания s3
+        - get-k8s-token.sh - получение токена для того чтобы можно было деплоить в куб из Github Actions
+    - terraform - содержит файлы установки на основе модулей инфраструктуры в яндекс облаке:
+        iam - сервис аккаунты
+        network - сеть
+        storage - сторедж
+        k8s - кластер
 
-    СКРИПТЫ
-    prepare.sh - создание первоначально сервис аккаунта в яндекс облаке для работы терраформ. Запускатеся единожды в самом начале.
-    get-s3-secrets.sh - получение S3 данных для использования в приложениях
+# Развертывание инфраструктуры и сервисов платформы (локально без CICD)
 
-## Развертывание инфраструктуры и сервисов платформы
+## 1. Подготовить локальное окружение для работы с YC
 
-# 1. Подготовить локальное окружение для работы с YC
-cd infra/scripts
-Заполнить раздел '### Вводные данные в файле prepare.sh'
-./prepare.sh
+Заполнить раздел '### Вводные данные', в файле `infra/scripts/prepare.sh`
 
-# 2. Развернуть инфраструктуру
-cd ../terraform
+`./infra/scripts./prepare.sh`
+
+## 2. Развернуть инфраструктуру
+
+`cd ../terraform`
+
 На основе файла template.tfvars создать файл terraform.tfvars с необходимыми переменными для доступа к YC.
-terraform fmt
-terraform init
-terraform validate
-terraform plan
-terraform apply
 
-# 3. Убедится что кластер доступен и работает
-kubectl get no -o wide
+`terraform fmt`
 
-# 4. Получить секреты для доступа в S3
-../scripts/get-s3-secrets.sh
+`terraform init`
 
-# Сохранить в гитхаб секреты
-access_key
-secret_access_key
+`terraform validate`
 
-## Развертывание приложения в кластере
+`terraform plan`
 
-# 1. Подготовить токен для деплоя в куб с помощью github actions
-    ```
+`terraform apply`
 
-script make copy config
+## 3. Убедится что кластер доступен и работает
+`kubectl get no -o wide`
 
+## 4. Получить секреты для доступа в S3 из локи
+`../scripts/get-s3-secrets.sh`
 
-    yc managed-kubernetes cluster get-credentials homework-k8s --external
+## 5. Сохранить секреты в гитхаб секреты (https://github.com/D1987/otus-project/settings/secrets/actions)
 
-        TOKEN=$(yc iam create-token)  ??????????
-        cat ~/.kube/config | base64 -w0
-    ````
-# 2. Cохранить токен в github секретах 'KUBE_CONFIG_DATA'
+- `ACCESS_KEY_ID`
+- `SECRET_ACCESS_KEY`
 
-# CICD Поставить арго
-Запускаем арго в github CICD
-port-forward
+# Развертывание приложений в кластере  (https://github.com/D1987/otus-project/actions/workflows/deploy.yml)
 
- Развернуть infra app > github actions
+## 1. Подготовить токен для деплоя в куб с помощью github actions
+` cd ../infra/scripts./get-k8s-token.sh`
 
- Сохранить ингресс ip в гитхаб секрет
+## 1.1 Cохранить токен в гитхаб секретах (https://github.com/D1987/otus-project/settings/secrets/actions)
+- `KUBE_CONFIG_DATA`
 
- Графана contact point
+## 3. Установить арго
 
- Развернуть приложение
+Запустить стейдж `argo` в Run workflow
 
+## 3.1 Получить пароль admin юзера
 
-# 3. Cделать пуш в github. Создать Pull Request в Main ветку. Это запустит автоматически деплой приложения в кластер.
+`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo`
 
-После деплоя, приложение будет доступно по адрессу https://158.160.187.124.sslip.io
-Используется сервис sslip.io
+## 4. Установить серт менеджер и ингресс
 
+Запустить стейдж `infra` в Run workflow
 
-##################################
+## 4.1 Сохранить ингресс ip в гитхаб секреты (https://github.com/D1987/otus-project/settings/secrets/actions)
 
-IP в ингрес и серт менеджер
-поменять урл серт менеджера
+Получить IP
 
+`kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'`
 
-# Get SA Ingress key
-./scripts/sa-ingress-key.sh
+Сохранить IP
 
-# Cleaning
-After terraform destroy delete homework/yc from .kube/congfig
+- `INGRESS_IP`
 
-kubectl patch application loki-stack -n argocd \
-  -p '{"metadata":{"finalizers":[]}}' --type=merge
+## 5. Установить локи стек
+
+Запустить стейдж `loki` в Run workflow
+
+## 5.1. Получить графана admin прароль
+
+`kubectl get secret --namespace loki loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
+
+## 6. Развернуть само приложение
+
+Запустить стейдж `app` в Run workflow
+
+## После деплоя, приложения будут доступно по адрессам (Используется сервис sslip.io)
+
+веб - https://${INGRESS_IP}.sslip.io
+
+арго - https://${INGRESS_IP}.argo.sslip.io
+
+графана - https://${INGRESS_IP}.grafana.sslip.io
+
+# Удаление ресурсов
+
+`terraform destroy`
