@@ -1,17 +1,73 @@
-name: Deploy to Yandex Kubernetes
+name: Разертывание Приложений
 
-run-name: ${{ github.actor }} is testing out GitHub Actions
+run-name: ${{ github.actor }} is deploying via ArgoCD
+
+permissions:
+  contents: write
 
 on:
-  # push:
-  #   branches:
-  #     - main
   workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Select deployment stage'
+        required: true
+        default: 'app'
+        type: choice
+        options:
+          - argo
+          - infra
+          - loki
+          - app
+          - all-infra
 
 jobs:
-  deploy:
+  deploy-argo:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'argo' || github.event.inputs.stage == 'all-infra' }}
 
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.2
+
+      - name: Render Loki template with envsubst
+        env:
+          INGRESS_IP: ${{ secrets.INGRESS_IP }}
+        run: |
+          envsubst < app/helm-apps/argocd/values-template.yml > app/helm-apps/argocd/values.yml
+
+      - name: Add ArgoCD repo
+        run: |
+          helm repo add argo https://argoproj.github.io/argo-helm
+          helm repo update
+
+      - name: Deploy ArgoCD
+        run: |
+          helm upgrade --install argocd argo/argo-cd \
+            --namespace argocd \
+            --create-namespace \
+            --values app/helm-apps/argocd/values.yml
+
+  # Деплой с помощью арго
+  deploy-infra:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'infra' || github.event.inputs.stage == 'all-infra' }}
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -25,8 +81,118 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config      
+
+      - name: Create Projects
+        run: |
+          kubectl apply -f app/argocd/app-project.yml -n argocd
+          kubectl apply -f app/argocd/infra-project.yml -n argocd
+
+      - name: Deploy Infra app
+        run: |
+          kubectl apply -f app/argocd/infra-helm-app.yml -n argocd
+      
+  deploy-loki-stack:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'loki' || github.event.inputs.stage == 'all-infra' }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
-      - name: Deploy to Kubernetes
+      - name: Install gettext for envsubst
+        run: sudo apt-get install -y gettext-base
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.2
+
+      - name: Render Loki template with envsubst
+        env:
+          EMAIL_GMAIL: ${{ secrets.EMAIL_GMAIL }}
+          APP_PASS: ${{ secrets.APP_PASS }}
+          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          INGRESS_IP: ${{ secrets.INGRESS_IP }}
         run: |
-          kubectl apply -f k8s/app/kubernetes-manifests.yaml
+          envsubst < app/helm-apps/loki-stack/values-template.yml > app/helm-apps/loki-stack/values.yml
+
+      - name: Deploy Dashboards and Alert
+        run: |
+          kubectl apply -f app/helm-apps/loki-stack/namespace.yml
+          kubectl apply -f app/helm-apps/loki-stack/app-alert-cm.yml
+          kubectl apply -f app/helm-apps/loki-stack/app-dashboards-cm.yml
+          kubectl apply -f app/helm-apps/loki-stack/k8s-dashboards-cm.yml
+
+      - name: Add Loki Helm repo
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+
+      - name: Deploy Loki Stack
+        run: |
+          helm upgrade --install loki grafana/loki-stack \
+            --namespace loki \
+            --create-namespace \
+            --values app/helm-apps/loki-stack/values.yml
+
+  deploy-app-project:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.stage == 'app' }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Install gettext for envsubst
+        run: sudo apt-get install -y gettext-base
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Render Cert-Manager template with envsubst
+        env:
+          EMAIL_GMAIL: ${{ secrets.EMAIL_21_VEK }}
+          INGRESS_IP: ${{ secrets.INGRESS_IP }}
+        run: |
+          envsubst < app/app/cert-manager-template.yml > app/app/cert-manager.yml
+
+      - name: Render Ingress template with envsubst
+        env:
+          INGRESS_IP: ${{ secrets.INGRESS_IP }}
+        run: |
+          envsubst < app/app/ingress-template.yml > app/app/ingress.yml
+          envsubst < app/app/ingress-grafana-template.yml > app/app/ingress-grafana.yml
+          envsubst < app/app/ingress-argo-template.yml > app/app/ingress-argo.yml
+
+      - name: Deploy Cert-Manager and Ingress
+        run: |
+          kubectl apply -f app/app/namespace.yml
+          kubectl apply -f app/app/ingress.yml
+          kubectl apply -f app/app/ingress-grafana.yml
+          kubectl apply -f app/app/ingress-argo.yml
+          kubectl apply -f app/app/cert-manager.yml
+
+      - name: Deploy Web app
+        run: |
+          kubectl apply -f app/argocd/web-app.yml -n argocd

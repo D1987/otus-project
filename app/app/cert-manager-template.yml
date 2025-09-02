@@ -1,0 +1,55 @@
+
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: ${EMAIL_21_VEK}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-tls
+  namespace: app
+spec:
+  secretName: app-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - ${INGRESS_IP}.sslip.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-tls-grafana
+  namespace: loki
+spec:
+  secretName: app-tls-secret-grafana
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - ${INGRESS_IP}.grafana.sslip.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-tls-argo
+  namespace: argocd
+spec:
+  secretName: app-tls-secret-argo
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - ${INGRESS_IP}.argo.sslip.io

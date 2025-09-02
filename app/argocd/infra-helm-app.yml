@@ -1,0 +1,56 @@
+# Ingress
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra-project
+  source:
+    repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: main
+    path: app/helm-apps/ingress-nginx
+    helm:
+      releaseName: ingress-nginx
+      valueFiles:
+        - values.yml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+---
+# Cert-manager
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra-project
+  source:
+    repoURL: https://github.com/D1987/otus-project.git
+    targetRevision: main
+    path: app/helm-apps/cert-manager
+    helm:
+      releaseName: cert-manager
+      valueFiles:
+        - values.yml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

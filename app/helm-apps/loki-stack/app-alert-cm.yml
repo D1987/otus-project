@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-alert
+  labels:
+    grafana_alert: "1"
+  namespace: loki
+data:
+  app-alert.json: |
+    {
+      "apiVersion": 1,
+      "groups": [
+        {
+          "orgId": 1,
+          "name": "App Alerts Group",
+          "folder": "App Alerts",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "b07c9c30-60f5-47ab-a4a0-a316c5132eb5",
+              "title": "App Errors Alert",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "queryType": "instant",
+                  "relativeTimeRange": { "from": 600, "to": 0 },
+                  "datasourceUid": "P8E80F9AEF21F6940",
+                  "model": {
+                    "editorMode": "code",
+                    "expr": "count_over_time({namespace=\"app\"} |= \"error\" [1h])",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "queryType": "instant",
+                    "refId": "A"
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": { "from": 600, "to": 0 },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": { "params": [1700], "type": "gt" },
+                        "operator": { "type": "and" },
+                        "query": { "params": ["C"] },
+                        "reducer": { "params": [], "type": "last" },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dasboardUid": "ff4ab9d1-65fe-428a-8cb9-056b8cffb839",
+              "panelId": 1,
+              "noDataState": "OK",
+              "execErrState": "OK",
+              "for": "1m",
+              "annotations": {
+                "__dashboardUid__": "ff4ab9d1-65fe-428a-8cb9-056b8cffb839",
+                "__panelId__": "1"
+              },
+              "labels": { "severenity": "" },
+              "isPaused": false
+            }
+          ]
+        }
+      ]
+    }

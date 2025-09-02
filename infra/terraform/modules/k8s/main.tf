@@ -129,6 +129,24 @@ resource "yandex_kubernetes_node_group" "infra_nodes" {
   }
 }
 
+resource "null_resource" "get_kubeconfig" {
+  depends_on = [yandex_kubernetes_cluster.cluster]
+
+  provisioner "local-exec" {
+    command = "yc managed-kubernetes cluster get-credentials homework-k8s --external"
+  }
+
+  triggers = {
+    cluster_id = yandex_kubernetes_cluster.cluster.id
+  }
+}
+
+output "kubeconfig_status" {
+  value       = "Kubeconfig для кластера homework-k8s получен"
+  description = "Статус получения учетных данных"
+  depends_on  = [null_resource.get_kubeconfig]
+}
+
 output "cluster_id" {
   value = yandex_kubernetes_cluster.cluster.id
 }
