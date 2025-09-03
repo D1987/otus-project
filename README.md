@@ -82,7 +82,7 @@
 # Развертывание приложений в кластере  (https://github.com/D1987/otus-project/actions/workflows/deploy.yml)
 
 ## 1. Подготовить токен для деплоя в куб с помощью github actions
-` cd ../infra/scripts./get-k8s-token.sh`
+`../scripts/get-k8s-token.sh`
 
 ## 1.1 Cохранить токен в гитхаб секретах (https://github.com/D1987/otus-project/settings/secrets/actions)
 - `KUBE_CONFIG_DATA`

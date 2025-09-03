@@ -24,7 +24,10 @@ data:
                 {
                   "refId": "A",
                   "queryType": "instant",
-                  "relativeTimeRange": { "from": 600, "to": 0 },
+                  "relativeTimeRange": {
+                    "from": 600,
+                    "to": 0
+                  },
                   "datasourceUid": "P8E80F9AEF21F6940",
                   "model": {
                     "editorMode": "code",
@@ -37,19 +40,39 @@ data:
                 },
                 {
                   "refId": "C",
-                  "relativeTimeRange": { "from": 600, "to": 0 },
+                  "relativeTimeRange": {
+                    "from": 600,
+                    "to": 0
+                  },
                   "datasourceUid": "__expr__",
                   "model": {
                     "conditions": [
                       {
-                        "evaluator": { "params": [1700], "type": "gt" },
-                        "operator": { "type": "and" },
-                        "query": { "params": ["C"] },
-                        "reducer": { "params": [], "type": "last" },
+                        "evaluator": {
+                          "params": [
+                            1700
+                          ],
+                          "type": "gt"
+                        },
+                        "operator": {
+                          "type": "and"
+                        },
+                        "query": {
+                          "params": [
+                            "C"
+                          ]
+                        },
+                        "reducer": {
+                          "params": [],
+                          "type": "last"
+                        },
                         "type": "query"
                       }
                     ],
-                    "datasource": { "type": "__expr__", "uid": "__expr__" },
+                    "datasource": {
+                      "type": "__expr__",
+                      "uid": "__expr__"
+                    },
                     "expression": "A",
                     "intervalMs": 1000,
                     "maxDataPoints": 43200,
@@ -58,7 +81,7 @@ data:
                   }
                 }
               ],
-              "dasboardUid": "ff4ab9d1-65fe-428a-8cb9-056b8cffb839",
+              "dashboardUid": "ff4ab9d1-65fe-428a-8cb9-056b8cffb839",
               "panelId": 1,
               "noDataState": "OK",
               "execErrState": "OK",
@@ -67,7 +90,105 @@ data:
                 "__dashboardUid__": "ff4ab9d1-65fe-428a-8cb9-056b8cffb839",
                 "__panelId__": "1"
               },
-              "labels": { "severenity": "" },
+              "labels": {
+                "severity": ""
+              },
+              "isPaused": false
+            }
+          ]
+        },
+        {
+          "orgId": 1,
+          "name": "Infra",
+          "folder": "App Alerts",
+          "interval": "1m",
+          "rules": [
+            {
+              "uid": "a6c3fac2-a856-44de-9180-a1df1628c807",
+              "title": "Container CPU Usage Seconds Total",
+              "condition": "C",
+              "data": [
+                {
+                  "refId": "A",
+                  "relativeTimeRange": {
+                    "from": 3600,
+                    "to": 0
+                  },
+                  "datasourceUid": "PBFA97CFB590B2093",
+                  "model": {
+                    "datasource": {
+                      "type": "prometheus",
+                      "uid": "PBFA97CFB590B2093"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "sum by(namespace, pod, container) (\n  rate(container_cpu_usage_seconds_total{namespace!=\"app\", pod!=\"\"}[5m])\n)",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "instant": false,
+                    "interval": "",
+                    "intervalMs": 15000,
+                    "legendFormat": "{{pod}}",
+                    "maxDataPoints": 43200,
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                  }
+                },
+                {
+                  "refId": "C",
+                  "relativeTimeRange": {
+                    "from": 0,
+                    "to": 0
+                  },
+                  "datasourceUid": "__expr__",
+                  "model": {
+                    "conditions": [
+                      {
+                        "evaluator": {
+                          "params": [
+                            0.08
+                          ],
+                          "type": "gt"
+                        },
+                        "operator": {
+                          "type": "and"
+                        },
+                        "query": {
+                          "params": [
+                            "C"
+                          ]
+                        },
+                        "reducer": {
+                          "params": [],
+                          "type": "last"
+                        },
+                        "type": "query"
+                      }
+                    ],
+                    "datasource": {
+                      "type": "__expr__",
+                      "uid": "__expr__"
+                    },
+                    "expression": "A",
+                    "intervalMs": 1000,
+                    "maxDataPoints": 43200,
+                    "refId": "C",
+                    "type": "threshold"
+                  }
+                }
+              ],
+              "dashboardUid": "e057caad-a8ac-4e16-bc3d-621a9e6a20f6",
+              "panelId": 2,
+              "noDataState": "OK",
+              "execErrState": "OK",
+              "for": "5m",
+              "annotations": {
+                "__dashboardUid__": "e057caad-a8ac-4e16-bc3d-621a9e6a20f6",
+                "__panelId__": "2"
+              },
+              "labels": {},
               "isPaused": false
             }
           ]
